@@ -1,0 +1,31 @@
+{
+    "avatar": "/images/avatar.png",
+    "name":"吴凯",
+	"name1":"wukai",
+	"tag": "Java后端/机器学习/技术宅",
+    "desc": "",
+    "skills": {
+        "Java": 8,
+		"分布式":4,
+		"invisible-split-line-1": -1
+    },
+    "projects": [{
+		"name": "FredaRpc",
+		"image": "http://iph.href.lu/303x303?text=FredaRPC",
+		"tags": ["Github", "RPC"],
+		"description": "基于Spring和Netty的RPC框架",
+		"link_text": "FredaRpc",
+		"link": "https://github.com/thinkerwolf/FredaRpc/"
+	}, {
+		"name": "Hantis",
+		"image": "http://iph.href.lu/303x303?text=Hantis",
+		"description": "基于JDBC开发数据库框架",
+		"tags": ["Github", "JDBC", "XML", "SQL"],
+		"link_text": "Hantis",
+		"link": "https://github.com/thinkerwolf/Hantis"
+	}],
+	"reward": [
+	    "/images/about/weixin_reward.png",
+		"/images/zhifubao_reward.png"
+	]
+}
