@@ -1,6 +1,6 @@
 ---
 title: 神经网络表示
-date: 2019-05-06 10:07:16
+date: 2019-05-19 10:37:05
 categories:
 - 机器学习
 tags:
@@ -124,13 +124,76 @@ $$
 设置$x=a^{(1)}$，将等式重写成：
 $$
 z^{(j)}=\Theta^{(j-1)}a^{(j-1)}
+$$
+$$
 z^{(j+1)}=\Theta^{(j)}a^{(j)}
 $$
-
 $$
 h_\Theta(x)=a^{(j+1)}=g(z^{(j+1)})
 $$
 
 ## 多元分类
+为了将数据分类到多种类型，预测函数输出向量值。
+$$
+y^{(i)}=
+	\begin{bmatrix}
+		1 \\\\
+		0 \\\\
+        0 \\\\
+		0
+	\end{bmatrix}
+	,
+	\begin{bmatrix}
+		0 \\\\
+		1 \\\\
+        0 \\\\
+		0
+	\end{bmatrix}
+	,
+	\begin{bmatrix}
+		0 \\\\
+		0 \\\\
+        1 \\\\
+		0
+	\end{bmatrix}
+	,
+	\begin{bmatrix}
+		0 \\\\
+		0 \\\\
+        0 \\\\
+		1
+	\end{bmatrix}
+$$
+每一个$y^{(i)}$代表了不同的分类结果。所有的隐藏层提供了一些新的信息计算出最终的预测函数。
+$$
+\begin{bmatrix}
+		x_0 \\\\
+		x_1 \\\\
+        x_2 \\\\
+		... \\\\
+		x_n
+\end{bmatrix} 
+->
+\begin{bmatrix}
+		a_0^{(2)} \\\\
+		a_1^{(2)} \\\\
+        a_2^{(2)} \\\\
+		... \\\\
+		a_n^{(2)}
+\end{bmatrix} 
+->
+...
+\begin{bmatrix}
+		h_\Theta(x)1 \\\\
+		h_\Theta(x)2 \\\\
+        h_\Theta(x)3 \\\\
+		h_\Theta(x)4
+\end{bmatrix}
+$$
+
+
+
+
+
 
 
