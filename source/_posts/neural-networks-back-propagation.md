@@ -92,7 +92,7 @@ $$
 
 根据公式推导可以得出(忽略正则项)
 $$
-\frac{\partial}{\partial\Theta_{i,j}^{(l)}}J(\Theta)=a_j^{(l)}\delta_i^{(l+1)}
+\frac{\partial}{\partial\Theta_{i,j}^{(l)}}J(\Theta)=D_{ij}^{(l)}=\frac{1}{m}a_j^{(l)}\delta_i^{(l+1)} %不一定正确
 $$
 
 ### 反向传播算法步骤
@@ -132,14 +132,50 @@ $$
 - 计算梯度
 
 $$
-D_{ij}^{(l)} := \frac{1}{m}\Delta_{ij}^{(l)}+\lambda\Theta_{ij}^{(l)} .... j\ne0
+D_{ij}^{(l)} := \frac{1}{m}\Delta_{ij}^{(l)}+\lambda\Theta_{ij}^{(l)} \qquad j\ne0
 $$
 
 $$
-D_{ij}^{(l)}:=\frac{1}{m}\Delta_{ij}^{(l)} ....j=0
+D_{ij}^{(l)}:=\frac{1}{m}\Delta_{ij}^{(l)} \qquad j=0
 $$
+
+## 随机初始化
+
+训练神经网络时，随机初始化参数以进行对称破坏非常重要。一个有效的随机化策略是从范围为$[-\epsilon_init,\epsilon_init]$中随机为$\Theta^{(l)}$选取值。你应该使$\epsilon_init=0.12$。这个范围中的值保证参数足够小，学习更加有效率。
 
 ## 梯度检测
+
+在你的神经网络中，你正在最小化代价函数$J(\Theta)$。为了运行参数的梯度检测，你可以想象将“未展开”的参数$\Theta^{(1)},\Theta^{(2)}$变成长的向量$\theta$。通过这种方式，你可以认为代价函数被替代为$J(\theta)$并且可以使用下面的梯度检测过程。
+
+假定有一个函数$f_i(\theta)$计算$\frac{\partial}{\partial\theta_{i}^{(l)}}J(\theta)$；你想检测$f_i$是否输出正确的偏导数。
+
+设置：
+$$
+\theta^{(i+)}=\theta+\begin{bmatrix}
+		0 \\\\
+		0 \\\\
+        \vdots \\\\
+		\epsilon \\\\
+		\vdots \\\\
+		0
+	\end{bmatrix} 
+	\qquad 
+	\theta^{(i-)}=\theta-\begin{bmatrix}
+		0 \\\\
+		0 \\\\
+        \vdots \\\\
+		\epsilon \\\\
+		\vdots \\\\
+		0
+	\end{bmatrix}
+$$
+
+因此$\theta^{(i+)}$与$\theta$相同，除了第$i$个元素加上$\epsilon$，类似$\theta^(i-)$是第$i$个元素减去$\epsilon$。你可以在数值基础上验证$f_i(\theta)$的正确性，验证每个$i$：
+$$
+f_i(\theta)\approx\frac{J(\theta^{(i+)})-J(\theta^{(i-)})}{2\epsilon}
+$$
+这两个值的近似程度取决于$J$的细节。但是假设$\epsilon=10^-4$，你通常上面公式的左侧和右侧将会相近至少4位有效数字。
+
 
 梯度检测假设反向传播已经运算好。我们可以大约将偏导数近似为：
 $$
