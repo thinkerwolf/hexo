@@ -78,6 +78,6 @@ theme: raytaylorism
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:git
-  repo:https://github.com/thinkerwolf/thinkerwolf.github.io
-  branch:public
+  type: git
+  repo: https://github.com/thinkerwolf/thinkerwolf.github.io.git
+  branch: master
