@@ -1,5 +1,5 @@
 ---
-title: Logistic回归
+title: 机器学习-Logistic回归
 date: 2019-05-06 17:11:16
 categories:
 - 机器学习

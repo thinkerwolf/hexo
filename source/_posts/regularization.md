@@ -1,5 +1,5 @@
 ---
-title: 正则化
+title: 机器学习-正则化
 date: 2019-05-07 14:11:16
 categories:
 - 机器学习
@@ -63,7 +63,6 @@ $$\frac{\delta}{\delta\theta_j}J(\theta)=
 		0 & 0 & 0 & \cdots & 0
 	\end{bmatrix}
 $$
-
 ## Logistic回归正则化
 ### 代价函数
 $$J(\theta)=-\frac{1}{m}(\sum_{i=1}^{m}{y^{(i)}\log(h_\theta(x^{(i)})+(1-y^{(i)})\log(1-h_\theta(x^{(i)})})
