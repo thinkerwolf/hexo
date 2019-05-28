@@ -24,17 +24,50 @@ tags:
 - 能否对这种类型编制索引。
 
 ### 数据类型概述
-数值数据类型
+#### 数值数据类型
 
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/AED2751B2AC4438C80674F99DD987930/6765)
 
-字符串数据类型
 
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/100F23EFD0434413A3CB56D858A30802/6771)
+| 数据类型  | 含义           |
+| --------- | -------------- |
+| TINYINT   | 非常小的整数   |
+| SMALLINT  | 小整数         |
+| MEDIUMINT | 中等大小的整数 |
+| INT       | 标准的整数     |
+| BIGINT    | 大整数         |
+| DECIMAL   | 定点数         |
+| FLOAT     | 单精度浮点数   |
+| DOUBLE    | 双精度浮点数   |
+| BIT       | 位字段         |
 
-日期数据类型
+#### 字符串数据类型
 
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/90B1DFE442D54F9F80C2DA818B1CDCFC/6773)
+| 数据类型    | 含义                                               |
+| ----------- | -------------------------------------------------- |
+| CHAR        | 固定长度的非二进制（字符）字符串                   |
+| VARCHAR     | 可变长度的非二进制字符串                           |
+| BINARY      | 固定长度的二进制字符串                             |
+| VARBINARY   | 可变长度的二进制字符串                             |
+| TINYBLOB    | 非常小的BLOB（二进制大对象）                       |
+| BLOB        | BLOB                                               |
+| MEDIUMBLOB  | 中等大小的BLOB                                     |
+| LONGBLOB    | 大BLOB                                             |
+| TINYTEXT    | 非常小的非二进制文本                               |
+| TEXT        | 小文本字字符串                                     |
+| MEFDIUMTEXT | 中等大小的非二进制字符串                           |
+| LONGTEXT    | 大的非二进制字符串                                 |
+| ENUM        | 枚举集合                                           |
+| SET         | 集合。数据列的取值可以是零或者这个集合中的多个元素 |
+
+#### 日期数据类型
+
+| 数据类型  | 含义                                      |
+| --------- | ----------------------------------------- |
+| DATE      | 日期值，格式为‘CCYY-MM-DD’                |
+| TIME      | 时间值，格式为‘hh:mm:ss’                  |
+| DATATIME  | 日期加时间值，格式为‘CCYY-MM-DD hh:mm:ss’ |
+| TIMESTAMP | 时间戳值，格式为‘CCYY-MM-DD hh:mm:ss’     |
+| YEAR      | 年份值，格式为CCYY或YY                    |
 
 ### 数值数据类型
 MySQL的数值类型分3大类。

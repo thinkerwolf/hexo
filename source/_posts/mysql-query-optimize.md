@@ -23,11 +23,11 @@ tags:
 ### 索引的优点
 一个没有索引的数据表就是无序的数据行集合。如下图没有索引的表，在进行查询时，就需要扫描表的每一行，如果数据量很大，且仅有少数记录匹配，工作过程效率很低。
 
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/1F0E37E521C8470B905230A627A4B277/7117)
+![image](/images/mysql/query_optimize1.png)
 
 如果为company_num添加索引，如下图所示，如果以company_num = 13进行查询时，先定位到索引表，定位到索引表后会发现3条符合的记录，遇到14时就不在查询，此时就会直接返回数据，避免了全表扫描的问题。
 
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/BEB2EB4612C349E0AA7DB45E75FC1042/7119)
+![image](/images/mysql/query_optimize2.png)
 
 不同的存储引擎索引的实现细节也不相同。MyISAM数据表，索引值在索引文件里，一个表可以有多个索引，所有的索引都存储在同一个索引文件里。InnoDB没有按照数据行和索引值分开。InnoDB存储引擎使用的是一个表空间，在这个表空间管理着所有INnoDB类型数据表的数据和索引的存储。可以通过配置让InnoDB为每个数据表分别创建一个它字节表空间。
 
@@ -144,9 +144,9 @@ FROM
 	INNER JOIN blog1 b1 ON b1.user_id = b.user_id ;
 ```
 可以查看在不加索引和加索引在Explain的结果
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/DDBCE6471B3B4246A0BF1706147568DE/7370)
+![image](/images/mysql/query_optimize3.png)
 
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/8261885137194E85ABCCB913674A3DFA/7368)
+![image](/images/mysql/query_optimize4.png)
 
 
 ### 为提高查询效率挑选数据类型

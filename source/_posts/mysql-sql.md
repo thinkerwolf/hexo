@@ -14,9 +14,20 @@ tags:
 MySQL允许创建、删除数据表或改变其结构，相应的SQL语句分别是CREATE TABLE、DROP TABLE、ALTER TABLE。CREATE INDEX和DROP INDEX语句用来给先用的数据表增加或删除索引。
 
 ### 存储引擎特征
-![image](https://note.youdao.com/yws/public/resource/dcff5c0bee1d6953fc0a1c4a49be81ca/xmlnote/243310A61B98490586D111C0AF1B2FAE/6202)
+| Engine             | Support | Commont                  | Transactions |   XA | Savapoints |
+| :----------------- | ------- | :----------------------- | -----------: | ---: | ---------: |
+| MEMORY             | YES     | 基于Hash，存储在内存中   |           NO |   NO |         NO |
+| MRG_MYISAM         | YES     | 同一的MyISAM表集合       |           NO |   NO |         NO |
+| CSV                | YES     | CSV存储引擎              |           NO |   NO |         NO |
+| FEDERATED          | NO      | 同盟MySQL存储引擎        |         NULL | NULL |       NULL |
+| PERFORMANCE_SCHEMA | YES     | 表现模式                 |           NO |   NO |         NO |
+| MyISAM             | YES     | MyISAM存储引擎           |           NO |   NO |         NO |
+| InnoDM             | DEFAULT | 支持事务、保存点、XA事务 |          YES |  YES |        YES |
+| BLOCKHOLE          | YES     | /dev/null存储引擎        |           NO |   NO |         NO |
+| ARCHIVE            | YES     | 存档存储引擎             |           NO |   NO |         NO |
 
 #### 存储引擎的可移植性
+
 先用mysqldump工具备份，然后把备份文件梵高另一台服务器主机，并通过加载备份文件重新创建该数据表。可移植性的另一层含义就是 **二进制可移植性**，指的是你可以直接把代表某个数据表的硬盘文件复制到另一台机器，并把它们安装到数据子目录下的地点，那台机器上的MySQL服务器就可以使用该数据表了。
 
 ### 创建数据表
