@@ -79,15 +79,38 @@ $$
 
 获取单个数字化的误差结果非常重要。否则很难知晓算法的性能。例如使用次干提取，得到了一个3%的误差而不是5%，然后我们应该将其加入模型。但是如果区分大小写得到3.2%的误差代替3%的误差，我们应该避免使用新特性。因此我们应该尝试新事物，为误差率计算一个数字化的值，根据结果决定是否将新特性加入模型中。
 
+## 不对称分类的误差和评估
 
+### 精确度和召回率
 
+|                 | 真实（y=1）    | 真实（y=0）    |
+| --------------- | -------------- | -------------- |
+| **预测（y=1）** | True positive  | False positive |
+| **预测（y=0）** | False negative | True negative  |
 
+- 精确度
 
+$$
+\frac{TruePositive}{PredictedPositive} = \frac{TruePositive}{TruePositive + FalsePositive}
+$$
 
+- 召回率
 
+$$
+\frac{TruePositive}{ActualPositive} = \frac{TruePositive}{TruePositive + FalseNegative}
+$$
 
+### 权衡精确度和召回率
 
+如何比较精确度和召回率
 
+|       | 精确度（P） | 召回率（R） |
+| ----- | ----------- | ----------- |
+| 算法1 | 0.5         | 0.4         |
+| 算法2 | 0.7         | 0.1         |
+| 算法3 | 0.02        | 1.0         |
 
-
+$$
+2\frac{PR}{P+R}
+$$
 
