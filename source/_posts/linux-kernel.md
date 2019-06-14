@@ -24,7 +24,7 @@ Linux内核的主要工作
 
 Linux内核中的进程会有私有的内存，出于安全性考虑。其他进程无法访问到私有内存。为了加强数据分享，用户可以创建共享内存。共享内存中会存储创建内存段的用户，时间、权限等等。
 
-![image](/images/linux/linux_kernel.png)
+{% asset_img linux_kernel.png This is an example image %}
 
 
 #### 软件程序管理
@@ -46,10 +46,10 @@ Linux为系统的硬件创建特殊的文件，名叫节点（Node）。系统�
 
 下面的图片是Node文件的详细信息。第一列表示读写权限，读写权限第一个字母表示文件类型。b(Block)、c(Character)。
 
-![image](/images/linux/linux_node.png)
+{% asset_img linux_node.png This is an example image %}
 
 #### 文件系统管理
-![image](/images/linux/linux_filesystem.png)
+{% asset_img linux_filesystem.png This is an example image %}
 
 
 ## The GNU UNITIES
