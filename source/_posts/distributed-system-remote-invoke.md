@@ -65,7 +65,7 @@ RPC设计三个重要概念：
 
 在分布式编程中使用接口有很多好处，都源于接口和实现之间的分离。
 
-- 程序员只需要关心服务提供的接口，不需要关系具体的实现。
+- 程序员只需要关心服务提供的接口，不需要关心具体的实现。
 - 推演（潜在的异构）分布式系统，无需关系编程语言和实现服务。
 - 只要接口不变，实现可以改变。
 
@@ -77,7 +77,47 @@ RPC设计三个重要概念：
 
 ***接口定义语言***：RPC机制可以集成到某种语言中，只要该语言包含适当的定义接口的语法。并允许将输入和输入映射成该语言中正常的参数。这在只使用一种语言的系统中非常有用。
 
-但是实际情况是每个系统可能都是使用不同的语言实现，这是使用一套跨平台的接口定义语言（Interface Definition Lanauage, IDL）十分有用。
+但是实际情况是每个系统可能都是使用不同的语言实现，这是使用一套跨平台的接口定义语言（Interface Definition Lanauage, IDL）十分有用。下面的代码就是GRPC的接口定义。
+
+```grpc
+syntax = "proto3";
+package customer;
+
+// The Customer sercie definition
+service Customer {
+    // Get all Customers with filter - A server-to-client streaming RPC.
+    rpc GetCustomers(CustomerFilter) returns (stream CustomerRequest) {}
+
+    // Create a new Customer - A simple RPC
+    rpc CreateCustomer (CustomerRequest) returns (CustomerResponse) {}
+}
+
+message CustomerRequest {
+    int32 id = 1;   // Unique ID number for a Customer.
+    string name = 2;
+    string email = 3;
+    string phone = 4;
+
+    message Address {
+        string street = 1;
+        string city = 2;
+        string state = 3;
+        string zip = 4;
+        bool isShippingAddress = 5;
+    }
+
+    repeated Address addresses = 5;
+}
+
+message CustomerResponse {
+    int32 id = 1;
+    bool success = 2;
+}
+
+message CustomerFilter {
+    string keyword = 1;
+}
+```
 
 **RPC调用语义**    请求-应答模型中保证传输的主要方式有：
 
@@ -94,3 +134,29 @@ RPC设计三个重要概念：
 | Y            | Y            | 重传应答           | 至多一次 |
 
 **透明性**   
+
+RPC致力于提供最少的位置透明性和访问透明性，隐藏过程的物理位置，也以同样的方式访问本地和远程的过程。
+
+同样，远程调用失败的概率要更高，其中涉及了另一台计算机，另一个进程。不论选择哪种语义调用，总有获取不到结果的情形，而且在出现故障的情况下，无法判别故障是源于网络失败还是源于远程服务器进程故障。这要求发起远程调用的程序能从故障中恢复。
+
+远程调用的延迟要远比本地调用大上好几个数量级，因此远程调用时需要将延迟因素考虑进去。例如尽可能减少远程交互。IDL的设计者也面临远程调用是否透明的抉择，例如，当客户与远程无法通信时，就抛出一个异常共客户端处理。IDL也可以提供一种指定过程调用语义的机制。
+
+## 远程方法调用
+
+远程方法调用（Remote Method Invacation）RPC和RMI之间具有相似性，只是RMI被扩展到了对象的层面。访问对象可以调用远程对象的方法。RMI和RPC的共性如下：
+
+- 都支持接口编程。
+- 都是典型的请求-应答协议构造，并提供一系列如最少一次、至多一次的调用语义。
+- 都提供相似的透明性。
+
+下面的不同会在复杂的分布式应用带来额外的功能：
+
+- 能够使用所有面向对象编程的功能。包括类、对象、继承的使用。
+- 基于RMI系统中的所有对象都有唯一的对象引用（无论是远程还是本地）。对象引用可以当做参数进行传递，因此RMI比RPC提供更丰富的参数传递语义。
+
+**创建代理类、分发器类和骨架类**     在RMI使用的代理类、分发器类和骨架类由接口编译器自动创建。
+
+动态调用：可替换代理的选择，上面提到的代理是静态的，即代理类是通过接口定义生成的，并编译到客户端代码中。但是有些情况下对象的远程接口在编译期无法确定。
+
+
+
