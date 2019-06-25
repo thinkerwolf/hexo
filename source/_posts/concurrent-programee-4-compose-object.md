@@ -164,5 +164,70 @@ NumberRange不是线程安全的，它没有保护好约束lower和upper的不�
 
 ### 发布底层状态变量
 
+如果一个状态变量是线程安全的，没有任何不变约束限制它的值，并且没有任何状态转换限制它的操作，那么它可以被安全发布。
+
+## 向已有的线程安全类添加功能
+
+### 客户端枷锁
+
+```java
+@NotThreadSafe
+public class ListHelper<E> {
+	public List<E> list = Collections.sychronizedList(new ArrayList<E>());
+	// 与list内部操作使用的不是同一把锁
+    public sychronized boolean putIfAbsent(E element) {
+		boolean c = list.contains(element);
+		if (!c) {
+			list.add(element);
+		}
+		return !c;
+	}
+}
+```
+
+这个类不是线程安全的，就是因为list和ListHelper使用的锁是不同的，虽然putIfAbsent方法是同步的，但是list的其他操作使用的锁与这个不同，所以依然无法保证线程安全。
+
+```java
+// 正确的客户端加锁
+@ThreadSafe
+public class ListHelper<E> {
+	public List<E> list = Collections.sychronizedList(new ArrayList<E>());
+	public boolean putIfAbsent(E element) {
+		// 使用list本身的锁进行同步
+        sychronized (list) {
+            boolean c = list.contains(element);
+            if (!c) {
+                list.add(element);
+            }
+            return !c;
+		}
+	}
+}
+```
+
+### 组合
+
+```java
+// 使用组合实现
+public class ImprovedList<E> {
+    private final List<E> list;
+    public class ImprovedList(List<E> list) {
+        this.list = list;
+    }
+    public sychronized boolean putIfAbsent(E element) {
+            boolean c = list.contains(element);
+            if (!c) {
+                list.add(element);
+            }
+            return !c;
+	}
+    public sychronized void clear() {
+        list.clear();
+    }
+}
+```
+
+ImprovedList使用Java监视器模式封装了List，使用自身的锁同步机制，不同关心传入的List内部同步与否。虽然可能在性能上有微弱的损失，但是在代码的健壮性上相比客户端加锁更加健壮。
+
 
 
