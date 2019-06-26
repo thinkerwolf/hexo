@@ -89,9 +89,153 @@ JDK7分离锁机制
 
 线程可能会因为几个原因被阻塞或暂停：等待I/O操作结束，等待获得一个锁，等待Thread.sleep中唤醒，等待另一个线程的计算结果。
 
-BlockingQueue的put和take方法会抛出受检查的InterruptedException，这与类库其他的一些方法是相同的，比如Thread.sleep。当一个方法能抛出InterruptedException时，表明这个方法是一个可阻塞方法。
+BlockingQueue的put和take方法会抛出受检查的InterruptedException，这与类库其他的一些方法是相同的，比如Thread.sleep。**当一个方法能抛出InterruptedException时，表明这个方法是一个可阻塞方法**。进一步看，如果它可以被中断，将可以提前结束阻塞状态。
 
+中断是一种**协作**机制。一个线程不能迫使其他线程停止正在做的事情，或者去做其他事情；当线程A中断线程B，只是让B在某个方便的停止点是停止。
 
+当代码中调用一个会抛出InterruptedException的方法时，有两种基本选择：
+
+**传递InterruptedException**，将异常抛出去。或者先捕获，进行特定的操作后在抛出异常。
+
+**恢复中断**，先捕获异常，在当前线程中调用interrupt方法让上层代码知道中断已经发生。
+
+```java
+public class TaskRunnable implements Runnable {
+	private BlockingQueue<Task> taskQueue = ...
+	@Override
+	public void run() {
+		try {
+			processTask(taskQueue.take());
+		} catch (IntterruptException e) {
+			Thread.currentThread().interrupt();
+		}
+	}
+}
+```
+
+## Sychronizer
+
+Sychronizer是一个对象，根据本身的状态调节线程控制流。阻塞队列可以扮演一个Sychronizer角色。其他类型的Sychronizer包括信号量（Semaphore），关卡（barrier）， 闭锁（latch）。
+
+### 闭锁
+
+用来确保特性活动在其他活动完成后才继续执行（考虑CountDownLatch的使用）。
+
+### FutureTask
+
+FutureTask可作为闭锁，当将FutureTask提交后，Future.get()会一直阻塞直到任务完成。
+
+```java
+public class SearchProductInfoHelper {
+    ExecutorService executor = Executors.newFixedThreadPool(4);
+    
+	public  ProductInfo get(final String productId) throws InterruptedException, DataLoadExcepton {
+        FutureTask<ProductInfo> task = new FutureTask<>(new Callable<ProductInfo>() {
+            public ProductInfo call() throws Exception {
+                return loadProduceInfo(productId);
+            }
+		});
+        exexutor.execute(task);
+        // 阻塞直到task完成
+        try {
+            return task.get();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof DataLoadExcepton) {
+                throw (DataLoadExcepton) cause;
+            } else {
+                // 处理不同原因导致的错误
+                throw launderThrowable(cause);
+            }
+        }
+    }
+}
+
+private static RuntimeException launderThrowable(Throwable t) {
+    if (t instanceof RuntimeException) {
+        return (RuntimeException) t;
+    } else if (t instanceof Error) {
+        throw (Error) t;
+    } else {
+        throw new IllegalStateException("Not checked", t);
+    }
+}
+```
+
+### 信号量
+
+控制能够同时访问某特定资源的活动的数量。可以用来实现资源池或给一个容器限定边界。（Semaphore）
+
+### 关卡
+
+闭锁是一次性使用对象，一旦到最终状态，就不能被重置了。
+
+关卡（barrier）类似于闭锁，它们能够阻塞一组线程，直到某些事件发生。关卡与闭锁的关键不同在于，必须等待所有线程同时到达关卡才能继续处理。**闭锁等待的是事件**；**关卡等待的是线程**；
+
+## 为计算结果建立高效、可伸缩的缓存
+
+缓存看起来再简单不过。一个天真的高速缓存，即使能改进在单线程环境下的性能，也只不过将性能瓶颈转化为可伸缩的瓶颈。
+
+```java
+// 版本1
+private Map<K, V> cache = new ConcurrentHashMap<>();
+public V compute(K key) {
+    V v = cache.get(key);
+    if (v == null) {
+        v = computeValue(key);
+        cache.put(key, v);
+    }
+    return v;
+}
+```
+
+![两个线程计算相同的值](/concurrent-programme-5-building-blocks/1561541075143.png)
+
+```java
+// 版本2
+private Map<K, FutureTask<V>> cache = new ConcurrentHashMap<>();
+public V compute(final K key) throws InterruptedException {
+    FutureTask<V> f = cache.get(key);
+    if (f == null) {
+        Callable<V> eval = new Callable<>() {
+          	public void call() throw Exception {
+                return omputeValue(key);
+            }  
+        };
+        FutureTask<V> ft = new FutureTask<V>();
+        f = ft;
+        ft.run();
+        cache.put(key, ft);
+    }
+    // 会阻塞直到ft.run执行完成
+    return f.get();
+}
+```
+
+![偶发的时序导致两次计算相同的值](/concurrent-programme-5-building-blocks/1561541164752.png)
+
+```java
+// 最终版，高
+private Map<K, FutureTask<V>> cache = new ConcurrentHashMap<>();
+public V compute(final K key) throws InterruptedException {
+    FutureTask<V> f = cache.get(key);
+    if (f == null) {
+        Callable<V> eval = new Callable<>() {
+          	public void call() throw Exception {
+                return omputeValue(key);
+            }  
+        };
+        FutureTask<V> ft = new FutureTask<V>();
+        f = cache.putIfAbsent(key, ft);
+        if (f == null) {
+        	f = ft;
+        	ft.run();
+        }
+    }
+    // 会阻塞直到ft.run执行完成
+    return f.get();
+}
+```
 
 
 
