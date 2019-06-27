@@ -1,5 +1,5 @@
 ---
-title: concurrent-programme-5-building-blocks
+title: Java并发编程-构建块
 date: 2019-06-25 10:10:28
 categories:
 - Java
